@@ -16,8 +16,29 @@ def main():
     env = ImgObsWrapper(env)
 
     model = PPO("CnnPolicy", env, policy_kwargs=policy_kwargs, verbose=1)
-    model.learn(1e6)
-    model.save("models/ppo/minigrid_empty")
+
+    # model.learn(1e5)
+
+    # model.save("models/ppo/minigrid_empty")
+    model.load("models/ppo/minigrid_empty", env=env)
+
+    obs, info = env.reset()
+    rewards = 0
+
+    for i in range(2000):
+        action, _state = model.predict(obs, deterministic=True)
+        obs, reward, terminated, truncated, info = env.step(action)
+        rewards += reward
+
+        if terminated or truncated:
+            print(f"Test reward: {rewards}")
+            obs, info = env.reset()
+            rewards = 0
+            continue
+
+    print(f"Test reward: {rewards}")
+
+    env.close()
 
 
 if __name__ == "__main__":
