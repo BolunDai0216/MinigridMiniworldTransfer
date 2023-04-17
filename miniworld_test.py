@@ -6,13 +6,16 @@ from stable_baselines3 import PPO
 
 
 def main():
-    env = gym.make("MiniWorld-OneRoom-v0")
-    obs, info = env.reset()
+    """
+    Create a virtual display using
 
-    set_trace()
+    xvfb-run python3 miniworld_test.py
+    """
+    env = gym.make("MiniWorld-OneRoom-v0")
 
     model = PPO("CnnPolicy", env, verbose=1)
-    model.learn(total_timesteps=2e5)
+    model = model.load("models/ppo/miniworld_oneroom", env=env)
+    model.learn(total_timesteps=1e4)
     model.save("models/ppo/miniworld_oneroom")
 
 
