@@ -1,22 +1,25 @@
 import gymnasium as gym
-from pdb import set_trace
 from stable_baselines3 import PPO
-from gymnasium.wrappers import RecordVideo
 
 
-def main(train=False):
+def main(train=True):
     if train:
         env = gym.make("CartPole-v1")
         model = PPO("MlpPolicy", env, verbose=1)
-        model.learn(total_timesteps=2e5)
-        model.save("models/ppo/models")
+        model.learn(total_timesteps=1e3)
+        model.save("models/ppo/cartpole")
+        action_net_weights = model.policy.action_net.weight
+        del model
 
     # Create Environement
     env = gym.make("CartPole-v1")
 
     # Load Model
     ppo = PPO("MlpPolicy", env, verbose=1)
-    ppo.load("models/ppo/models")
+    ppo = ppo.load("models/ppo/cartpole", print_system_info=True)
+    loaded_action_net_weights = ppo.policy.action_net.weight
+
+    print(loaded_action_net_weights - action_net_weights)
 
     obs, info = env.reset()
     rewards = 0

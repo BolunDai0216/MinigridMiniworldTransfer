@@ -1,9 +1,8 @@
-import gymnasium as gym
 from pdb import set_trace
-from stable_baselines3 import PPO
+
+import gymnasium as gym
 import miniworld
-from gymnasium.core import ObservationWrapper
-from gymnasium import spaces
+from stable_baselines3 import PPO
 
 
 def main():
