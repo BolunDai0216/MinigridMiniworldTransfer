@@ -1,4 +1,6 @@
+from datetime import datetime
 from pdb import set_trace
+from time import time
 
 import gymnasium as gym
 import minigrid
@@ -10,7 +12,7 @@ from gymnasium.spaces import Box, Dict
 from stable_baselines3 import PPO
 from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
 
-TRAIN = True
+TRAIN = False
 
 
 class DoorObsWrapper(ObservationWrapper):
@@ -78,9 +80,9 @@ class DoorEnvExtractor(BaseFeaturesExtractor):
                         th.as_tensor(subspace.sample()[None]).float()
                     ).shape[1]
 
-                linear = nn.Sequential(nn.Linear(n_flatten, 128), nn.ReLU())
+                linear = nn.Sequential(nn.Linear(n_flatten, 64), nn.ReLU())
                 extractors["image"] = nn.Sequential(*(list(cnn) + list(linear)))
-                total_concat_size += 128
+                total_concat_size += 64
 
             elif key == "door_color":
                 extractors["door_color"] = nn.Linear(subspace.shape[0], 32)
@@ -105,18 +107,23 @@ class DoorEnvExtractor(BaseFeaturesExtractor):
 def main():
     policy_kwargs = dict(features_extractor_class=DoorEnvExtractor)
 
+    # Create time stamp of experiment
+    stamp = datetime.fromtimestamp(time()).strftime("%Y%m%d-%H%M%S")
+
     if TRAIN:
         env = gym.make("MiniGrid-GoToDoor-8x8-v0")
         env = DoorObsWrapper(env)
         model = PPO("MultiInputPolicy", env, policy_kwargs=policy_kwargs, verbose=1)
-        model.learn(2e5)
-        model.save("models/ppo/minigrid_door")
+        model.learn(2e6)
+        model.save(f"models/ppo/minigrid_door_{stamp}")
     else:
-        env = gym.make("MiniGrid-GoToDoor-5x5-v0", render_mode="human")
+        env = gym.make("MiniGrid-GoToDoor-8x8-v0")
         env = DoorObsWrapper(env)
 
     ppo = PPO("MultiInputPolicy", env, policy_kwargs=policy_kwargs, verbose=1)
-    ppo = ppo.load("models/ppo/minigrid_door", env=env)
+
+    # add the experiment time stamp
+    ppo = ppo.load("models/ppo/minigrid_door_20230418-174509", env=env)
 
     obs, info = env.reset()
     rewards = 0
