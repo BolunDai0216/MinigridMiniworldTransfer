@@ -6,13 +6,9 @@ import numpy as np
 import torch as th
 import torch.nn as nn
 from gymnasium.core import ObservationWrapper
-from gymnasium.spaces import Box, Dict, MultiBinary
-from minigrid.manual_control import ManualControl
-from minigrid.wrappers import ImgObsWrapper
+from gymnasium.spaces import Box, Dict
 from stable_baselines3 import PPO
 from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
-
-from minigrid_cnn import MinigridCNN
 
 TRAIN = True
 
@@ -51,11 +47,11 @@ class DoorObsWrapper(ObservationWrapper):
 
 
 class DoorEnvExtractor(BaseFeaturesExtractor):
-    def __init__(self, observation_space: Dict, features_dim: int = 144):
+    def __init__(self, observation_space: Dict):
         # We do not know features-dim here before going over all the items,
         # so put something dummy for now. PyTorch requires calling
         # nn.Module.__init__ before adding modules
-        super().__init__(observation_space, features_dim)
+        super().__init__(observation_space, features_dim=1)
 
         extractors = {}
         total_concat_size = 0
@@ -101,15 +97,13 @@ class DoorEnvExtractor(BaseFeaturesExtractor):
         # self.extractors contain nn.Modules that do all the processing.
         for key, extractor in self.extractors.items():
             encoded_tensor_list.append(extractor(observations[key]))
+
         # Return a (B, self._features_dim) PyTorch tensor, where B is batch dimension.
         return th.cat(encoded_tensor_list, dim=1)
 
 
 def main():
-    policy_kwargs = dict(
-        features_extractor_class=DoorEnvExtractor,
-        features_extractor_kwargs=dict(features_dim=128),
-    )
+    policy_kwargs = dict(features_extractor_class=DoorEnvExtractor)
 
     if TRAIN:
         env = gym.make("MiniGrid-GoToDoor-8x8-v0")
