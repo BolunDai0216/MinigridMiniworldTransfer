@@ -10,7 +10,7 @@ import torch as th
 import torch.nn as nn
 from gymnasium.core import ObservationWrapper
 from gymnasium.spaces import Box, Dict
-from stable_baselines3 import PPO
+from sb3_contrib import RecurrentPPO
 from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
 
@@ -126,8 +126,8 @@ def main():
             name_prefix="iter",
         )
 
-        model = PPO(
-            "MultiInputPolicy",
+        model = RecurrentPPO(
+            "MultiInputLstmPolicy",
             env,
             policy_kwargs=policy_kwargs,
             verbose=1,
@@ -145,7 +145,9 @@ def main():
             env = gym.make("MiniGrid-GoToDoor-8x8-v0")
         env = DoorObsWrapper(env)
 
-    ppo = PPO("MultiInputPolicy", env, policy_kwargs=policy_kwargs, verbose=1)
+    ppo = RecurrentPPO(
+        "MultiInputLstmPolicy", env, policy_kwargs=policy_kwargs, verbose=1
+    )
 
     # add the experiment time stamp
     ppo = ppo.load(f"models/ppo/{args.load_model}", env=env)

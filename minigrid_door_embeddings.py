@@ -85,7 +85,12 @@ class DoorEnvExtractor(BaseFeaturesExtractor):
                 total_concat_size += 64
 
             elif key == "door_color":
-                extractors["door_color"] = nn.Linear(subspace.shape[0], 32)
+                extractors["door_color"] = nn.Sequential(
+                    nn.Linear(subspace.shape[0], 64),
+                    nn.ReLU(),
+                    nn.Linear(64, 32),
+                    nn.ReLU(),
+                )
                 total_concat_size += 32
 
         self.extractors = nn.ModuleDict(extractors)
