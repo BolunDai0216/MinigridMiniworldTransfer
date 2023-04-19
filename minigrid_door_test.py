@@ -1,3 +1,4 @@
+import argparse
 from datetime import datetime
 from pdb import set_trace
 from time import time
@@ -11,8 +12,6 @@ from gymnasium.core import ObservationWrapper
 from gymnasium.spaces import Box, Dict
 from stable_baselines3 import PPO
 from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
-
-TRAIN = False
 
 
 class DoorObsWrapper(ObservationWrapper):
@@ -105,25 +104,34 @@ class DoorEnvExtractor(BaseFeaturesExtractor):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--train", action="store_true", help="train the model")
+    parser.add_argument("--load_model", default="minigrid_door_20230418-174509")
+    parser.add_argument("--render", action="store_true", help="render trained models")
+    args = parser.parse_args()
+
     policy_kwargs = dict(features_extractor_class=DoorEnvExtractor)
 
     # Create time stamp of experiment
     stamp = datetime.fromtimestamp(time()).strftime("%Y%m%d-%H%M%S")
 
-    if TRAIN:
+    if args.train:
         env = gym.make("MiniGrid-GoToDoor-8x8-v0")
         env = DoorObsWrapper(env)
         model = PPO("MultiInputPolicy", env, policy_kwargs=policy_kwargs, verbose=1)
         model.learn(2e6)
         model.save(f"models/ppo/minigrid_door_{stamp}")
     else:
-        env = gym.make("MiniGrid-GoToDoor-8x8-v0")
+        if args.render:
+            env = gym.make("MiniGrid-GoToDoor-8x8-v0", render_mode="human")
+        else:
+            env = gym.make("MiniGrid-GoToDoor-8x8-v0")
         env = DoorObsWrapper(env)
 
     ppo = PPO("MultiInputPolicy", env, policy_kwargs=policy_kwargs, verbose=1)
 
     # add the experiment time stamp
-    ppo = ppo.load("models/ppo/minigrid_door_20230418-174509", env=env)
+    ppo = ppo.load(f"models/ppo/{args.load_model}", env=env)
 
     obs, info = env.reset()
     rewards = 0
