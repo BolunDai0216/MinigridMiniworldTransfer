@@ -1,5 +1,3 @@
-from pdb import set_trace
-
 import numpy as np
 from gymnasium import spaces, utils
 from miniworld.entity import Box
