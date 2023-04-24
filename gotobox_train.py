@@ -109,7 +109,10 @@ class BoxEnvExtractor(BaseFeaturesExtractor):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--train", action="store_true", help="train the model")
-    parser.add_argument("--load_model", default="minigrid_door_20230418-174509")
+    parser.add_argument(
+        "--load_model",
+        default="minigrid_gotobox_20230424-104508/iter_2000000_steps.zip",
+    )
     parser.add_argument("--render", action="store_true", help="render trained models")
     args = parser.parse_args()
 
@@ -147,28 +150,28 @@ def main():
             env = GoToBoxEnv()
         env = BoxObsWrapper(env)
 
-    ppo = PPO("MultiInputPolicy", env, policy_kwargs=policy_kwargs, verbose=1)
+        ppo = PPO("MultiInputPolicy", env, policy_kwargs=policy_kwargs, verbose=1)
 
-    # add the experiment time stamp
-    ppo = ppo.load(f"models/ppo/{args.load_model}", env=env)
+        # add the experiment time stamp
+        ppo = ppo.load(f"models/ppo/{args.load_model}", env=env)
 
-    obs, info = env.reset()
-    rewards = 0
+        obs, info = env.reset()
+        rewards = 0
 
-    for i in range(2000):
-        action, _state = ppo.predict(obs, deterministic=True)
-        obs, reward, terminated, truncated, info = env.step(action)
-        rewards += reward
+        for i in range(2000):
+            action, _state = ppo.predict(obs, deterministic=True)
+            obs, reward, terminated, truncated, info = env.step(action)
+            rewards += reward
 
-        if terminated or truncated:
-            print(f"Test reward: {rewards}")
-            obs, info = env.reset()
-            rewards = 0
-            continue
+            if terminated or truncated:
+                print(f"Test reward: {rewards}")
+                obs, info = env.reset()
+                rewards = 0
+                continue
 
-    print(f"Test reward: {rewards}")
+        print(f"Test reward: {rewards}")
 
-    env.close()
+        env.close()
 
 
 if __name__ == "__main__":
