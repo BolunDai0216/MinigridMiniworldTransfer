@@ -27,7 +27,7 @@ class GridObsWrapper(ObservationWrapper):
 
         self.observation_space = Dict(
             {
-                "image": env.observation_space.spaces["image"],
+                "image": env.observation_space,
                 "door_color": Box(low=0.0, high=1.0, shape=(6,), dtype=np.float32),
             }
         )
@@ -43,7 +43,7 @@ class GridObsWrapper(ObservationWrapper):
 
     def observation(self, obs):
         wrapped_obs = {
-            "image": obs["image"],
+            "image": obs,
             "door_color": self.color_one_hot_dict[self.target_color],
         }
 
