@@ -34,16 +34,16 @@ class MiniworldGridEnv(MiniWorldEnv, utils.EzPickle):
         colors = np.random.choice(COLOR_NAMES, size=4, replace=False)
 
         self.box_left = self.place_entity(
-            Box(color=colors[0]), pos=np.array([0.5, 0.5, 4.5]), dir=0.0
+            Box(color=colors[0], size=0.5), pos=np.array([0.9, 0.5, 4.5]), dir=0.0
         )
         self.box_bottom = self.place_entity(
-            Box(color=colors[1]), pos=np.array([4.5, 0.5, 8.5]), dir=0.0
+            Box(color=colors[1], size=0.5), pos=np.array([4.5, 0.5, 8.1]), dir=0.0
         )
         self.box_right = self.place_entity(
-            Box(color=colors[2]), pos=np.array([8.5, 0.5, 4.5]), dir=0.0
+            Box(color=colors[2], size=0.5), pos=np.array([8.1, 0.5, 4.5]), dir=0.0
         )
         self.box_up = self.place_entity(
-            Box(color=colors[3]), pos=np.array([4.5, 0.5, 0.5]), dir=0.0
+            Box(color=colors[3], size=0.5), pos=np.array([4.5, 0.5, 0.9]), dir=0.0
         )
 
         self.boxes = [self.box_left, self.box_bottom, self.box_right, self.box_up]
@@ -55,6 +55,7 @@ class MiniworldGridEnv(MiniWorldEnv, utils.EzPickle):
 
         # Generate the mission string
         self.mission = f"go to the {self.target_color} box"
+        print(self.mission)
 
         self.place_agent(pos=np.array([4.5, 0.5, 4.5]), dir=0.0)
 
@@ -64,15 +65,14 @@ class MiniworldGridEnv(MiniWorldEnv, utils.EzPickle):
         ax, ay = self.agent.pos[0], self.agent.pos[2]
         tx, ty = self.target_box.pos[0], self.target_box.pos[2]
 
-        # if action == self.actions.done:
-        #     if (ax == tx and int(abs(ay - ty)) == 1) or (
-        #         ay == ty and int(abs(ax - tx)) == 1
-        #     ):
-        #         reward += self._reward()
-        #     termination = True
+        next_ax = ax + 0.8 * np.cos(self.agent.dir)
+        next_ay = ay - 0.8 * np.sin(self.agent.dir)
 
-        if self.near(self.target_box):
-            reward += self._reward()
+        _dis = np.sqrt((next_ax - tx) ** 2 + (next_ay - ty) ** 2)
+
+        if action == self.actions.done:
+            if _dis <= 0.2:
+                reward += self._reward()
             termination = True
 
         return obs, reward, termination, truncation, info
