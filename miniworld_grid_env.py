@@ -55,7 +55,6 @@ class MiniworldGridEnv(MiniWorldEnv, utils.EzPickle):
 
         # Generate the mission string
         self.mission = f"go to the {self.target_color} box"
-        print(self.mission)
 
         self.place_agent(pos=np.array([4.5, 0.5, 4.5]), dir=0.0)
 
@@ -70,9 +69,9 @@ class MiniworldGridEnv(MiniWorldEnv, utils.EzPickle):
 
         _dis = np.sqrt((next_ax - tx) ** 2 + (next_ay - ty) ** 2)
 
-        if action == self.actions.done:
-            if _dis <= 0.2:
-                reward += self._reward()
+        # if action == self.actions.done:
+        if _dis <= 0.2:
+            reward += self._reward()
             termination = True
 
         return obs, reward, termination, truncation, info
