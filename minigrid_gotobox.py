@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pdb import set_trace
+
 from minigrid.core.constants import COLOR_NAMES
 from minigrid.core.grid import Grid
 from minigrid.core.mission import MissionSpace
@@ -91,14 +93,27 @@ class GoToBoxEnv(MiniGridEnv):
         ax, ay = self.agent_pos
         tx, ty = self.target_pos
 
+        if self.agent_dir == 0:
+            next_ax = ax + 1
+            next_ay = ay
+        elif self.agent_dir == 1:
+            next_ax = ax
+            next_ay = ay + 1
+        elif self.agent_dir == 2:
+            next_ax = ax - 1
+            next_ay = ay
+        elif self.agent_dir == 3:
+            next_ax = ax
+            next_ay = ay - 1
+
         # Don't let the agent open any of the doors
         if action == self.actions.toggle:
             terminated = True
 
         # Reward performing done action in front of the target door
-        if action == self.actions.done:
-            if (ax == tx and abs(ay - ty) == 1) or (ay == ty and abs(ax - tx) == 1):
-                reward = self._reward()
+        # if action == self.actions.done:
+        if next_ax == tx and next_ay == ty:
+            reward = self._reward()
             terminated = True
 
         return obs, reward, terminated, truncated, info
@@ -108,7 +123,7 @@ def main():
     env = GoToBoxEnv(render_mode="human")
 
     # enable manual control for testing
-    manual_control = ManualControl(env, seed=42)
+    manual_control = ManualControl(env)
     manual_control.start()
 
 

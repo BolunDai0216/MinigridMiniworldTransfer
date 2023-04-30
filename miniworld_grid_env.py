@@ -69,7 +69,6 @@ class MiniworldGridEnv(MiniWorldEnv, utils.EzPickle):
 
         _dis = np.sqrt((next_ax - tx) ** 2 + (next_ay - ty) ** 2)
 
-        # if action == self.actions.done:
         if _dis <= 0.2:
             reward += self._reward()
             termination = True
