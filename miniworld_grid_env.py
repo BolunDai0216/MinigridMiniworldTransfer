@@ -15,7 +15,7 @@ class MiniworldGridEnv(MiniWorldEnv, utils.EzPickle):
 
         # Parameters for larger movement steps, fast stepping
         params = DEFAULT_PARAMS.no_random()
-        params.set("forward_step", 1.0)
+        params.set("forward_step", 0.9)
         params.set("turn_step", 90)
 
         MiniWorldEnv.__init__(
@@ -64,11 +64,15 @@ class MiniworldGridEnv(MiniWorldEnv, utils.EzPickle):
         ax, ay = self.agent.pos[0], self.agent.pos[2]
         tx, ty = self.target_box.pos[0], self.target_box.pos[2]
 
-        if action == self.actions.done:
-            if (ax == tx and int(abs(ay - ty)) == 1) or (
-                ay == ty and int(abs(ax - tx)) == 1
-            ):
-                reward += self._reward()
+        # if action == self.actions.done:
+        #     if (ax == tx and int(abs(ay - ty)) == 1) or (
+        #         ay == ty and int(abs(ax - tx)) == 1
+        #     ):
+        #         reward += self._reward()
+        #     termination = True
+
+        if self.near(self.target_box):
+            reward += self._reward()
             termination = True
 
         return obs, reward, termination, truncation, info
