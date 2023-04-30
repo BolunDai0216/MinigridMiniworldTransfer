@@ -142,9 +142,9 @@ def main():
         )
     else:
         if args.render:
-            env = env = MiniworldGridEnv(render_mode="human")
+            env = MiniworldGridEnv(render_mode="human")
         else:
-            env = env = MiniworldGridEnv()
+            env = MiniworldGridEnv()
         env = GridObsWrapper(env)
 
     ppo = PPO("MultiInputPolicy", env, policy_kwargs=policy_kwargs, verbose=1)
