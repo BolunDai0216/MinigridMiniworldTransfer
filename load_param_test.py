@@ -67,6 +67,8 @@ def main():
     model.policy.features_extractor.extractors.door_color.bias = nn.Parameter(
         params["policy"]["features_extractor.extractors.box_color.bias"]
     )
+    model.policy.features_extractor.extractors.door_color.weight.requires_grad=False
+    model.policy.features_extractor.extractors.door_color.bias.requires_grad=False
 
     """
     (pi_features_extractor): GridEnvExtractor(
@@ -93,6 +95,8 @@ def main():
     model.policy.pi_features_extractor.extractors.door_color.bias = nn.Parameter(
         params["policy"]["pi_features_extractor.extractors.box_color.bias"]
     )
+    model.policy.pi_features_extractor.extractors.door_color.weight.requires_grad=False
+    model.policy.pi_features_extractor.extractors.door_color.bias.requires_grad=False
 
     """
     (vf_features_extractor): GridEnvExtractor(
@@ -119,6 +123,8 @@ def main():
     model.policy.vf_features_extractor.extractors.door_color.bias = nn.Parameter(
         params["policy"]["vf_features_extractor.extractors.box_color.bias"]
     )
+    model.policy.vf_features_extractor.extractors.door_color.weight.requires_grad=False
+    model.policy.vf_features_extractor.extractors.door_color.bias.requires_grad=False
 
     """
     (mlp_extractor): MlpExtractor(
@@ -150,20 +156,28 @@ def main():
         model.policy.mlp_extractor.value_net[i].bias = nn.Parameter(
             params["policy"][f"mlp_extractor.value_net.{i}.bias"]
         )
+        model.policy.mlp_extractor.policy_net[i].weight.requires_grad = False
+        model.policy.mlp_extractor.policy_net[i].bias.requires_grad = False
+        model.policy.mlp_extractor.value_net[i].weight.requires_grad = False
+        model.policy.mlp_extractor.value_net[i].bias.requires_grad = False
 
     """
     (action_net): Linear(in_features=64, out_features=3, bias=True)
     """
 
     model.policy.action_net.weight = nn.Parameter(params["policy"]["action_net.weight"])
+    model.policy.action_net.weight.requires_grad = False
     model.policy.action_net.bias = nn.Parameter(params["policy"]["action_net.bias"])
+    model.policy.action_net.bias.requires_grad = False
 
     """
     (value_net): Linear(in_features=64, out_features=1, bias=True)
     """
 
     model.policy.value_net.weight = nn.Parameter(params["policy"]["value_net.weight"])
+    model.policy.value_net.weight.requires_grad = False
     model.policy.value_net.bias = nn.Parameter(params["policy"]["value_net.bias"])
+    model.policy.value_net.bias.requires_grad = False
 
     model.learn(
         2e6,
