@@ -8,7 +8,8 @@ from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.save_util import load_from_zip_file
 
 from miniworld_grid_env import MiniworldGridEnv
-from miniworld_grid_test import GridEnvExtractor, GridObsWrapper
+from miniworld_grid_test import GridObsWrapper
+from transfer_extractor import GridEnvExtractor
 
 
 def main():
@@ -152,25 +153,17 @@ def main():
 
     """
     (action_net): Linear(in_features=64, out_features=3, bias=True)
-    """    
-    
-    model.policy.action_net.weight = nn.Parameter(
-        params["policy"]["action_net.weight"]
-    )
-    model.policy.action_net.bias = nn.Parameter(
-        params["policy"]["action_net.bias"]
-    )
-        
+    """
+
+    model.policy.action_net.weight = nn.Parameter(params["policy"]["action_net.weight"])
+    model.policy.action_net.bias = nn.Parameter(params["policy"]["action_net.bias"])
+
     """
     (value_net): Linear(in_features=64, out_features=1, bias=True)
     """
 
-    model.policy.value_net.weight = nn.Parameter(
-        params["policy"]["value_net.weight"]
-    )
-    model.policy.value_net.bias = nn.Parameter(
-        params["policy"]["value_net.bias"]
-    )
+    model.policy.value_net.weight = nn.Parameter(params["policy"]["value_net.weight"])
+    model.policy.value_net.bias = nn.Parameter(params["policy"]["value_net.bias"])
 
     model.learn(
         2e6,
