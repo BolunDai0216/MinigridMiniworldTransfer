@@ -49,8 +49,10 @@ class ObjObsWrapper(ObservationWrapper):
 
     def observation(self, obs):
         mission_array = np.concatenate(
-            self.color_one_hot_dict[self.target_color],
-            self.obj_one_hot_dict[self.target_obj],
+            [
+                self.color_one_hot_dict[self.target_color],
+                self.obj_one_hot_dict[self.target_obj],
+            ]
         )
 
         wrapped_obs = {
