@@ -9,9 +9,12 @@ from miniworld.params import DEFAULT_PARAMS
 
 
 class MiniworldGoToObjEnv(MiniWorldEnv, utils.EzPickle):
-    def __init__(self, size=9, max_episode_steps=100, fast=True, **kwargs):
+    def __init__(
+        self, size=9, max_episode_steps=100, fast=True, manual_control=False, **kwargs
+    ):
         assert size >= 2
         self.size = size
+        self.manual_control = manual_control
 
         # Parameters for larger movement steps, fast stepping
         params = DEFAULT_PARAMS.no_random()
@@ -86,6 +89,9 @@ class MiniworldGoToObjEnv(MiniWorldEnv, utils.EzPickle):
 
         # Generate the mission string
         self.mission = f"go to the {self.target_color} {self.target_obj_name}"
+
+        if self.manual_control:
+            print(self.mission)
 
         self.place_agent(pos=np.array([4.5, 0.5, 4.5]), dir=0.0)
 
