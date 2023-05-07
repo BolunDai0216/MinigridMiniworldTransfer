@@ -81,7 +81,6 @@ class MiniworldGoToObjEnv(MiniWorldEnv, utils.EzPickle):
 
         # Generate the mission string
         self.mission = f"go to the {self.target_color} {self.target_obj_name}"
-        print(self.mission)
 
         self.place_agent(pos=np.array([4.5, 0.5, 4.5]), dir=0.0)
 
