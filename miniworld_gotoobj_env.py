@@ -114,7 +114,7 @@ class MiniworldGoToObjEnv(MiniWorldEnv, utils.EzPickle):
 
 
 def main():
-    env = MiniworldGoToObjEnv(view="top", render_mode="human")
+    env = MiniworldGoToObjEnv(view="top", render_mode="human", manual_control=True)
 
     manual_control = ManualControl(env, True, True)
     manual_control.run()
