@@ -67,8 +67,8 @@ def main():
     model.policy.features_extractor.extractors.door_color.bias = nn.Parameter(
         params["policy"]["features_extractor.extractors.box_color.bias"]
     )
-    model.policy.features_extractor.extractors.door_color.weight.requires_grad=False
-    model.policy.features_extractor.extractors.door_color.bias.requires_grad=False
+    model.policy.features_extractor.extractors.door_color.weight.requires_grad = False
+    model.policy.features_extractor.extractors.door_color.bias.requires_grad = False
 
     """
     (pi_features_extractor): GridEnvExtractor(
@@ -95,8 +95,10 @@ def main():
     model.policy.pi_features_extractor.extractors.door_color.bias = nn.Parameter(
         params["policy"]["pi_features_extractor.extractors.box_color.bias"]
     )
-    model.policy.pi_features_extractor.extractors.door_color.weight.requires_grad=False
-    model.policy.pi_features_extractor.extractors.door_color.bias.requires_grad=False
+    model.policy.pi_features_extractor.extractors.door_color.weight.requires_grad = (
+        False
+    )
+    model.policy.pi_features_extractor.extractors.door_color.bias.requires_grad = False
 
     """
     (vf_features_extractor): GridEnvExtractor(
@@ -123,8 +125,10 @@ def main():
     model.policy.vf_features_extractor.extractors.door_color.bias = nn.Parameter(
         params["policy"]["vf_features_extractor.extractors.box_color.bias"]
     )
-    model.policy.vf_features_extractor.extractors.door_color.weight.requires_grad=False
-    model.policy.vf_features_extractor.extractors.door_color.bias.requires_grad=False
+    model.policy.vf_features_extractor.extractors.door_color.weight.requires_grad = (
+        False
+    )
+    model.policy.vf_features_extractor.extractors.door_color.bias.requires_grad = False
 
     """
     (mlp_extractor): MlpExtractor(
