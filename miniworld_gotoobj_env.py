@@ -9,14 +9,19 @@ from miniworld.params import DEFAULT_PARAMS
 
 
 class MiniworldGoToObjEnv(MiniWorldEnv, utils.EzPickle):
-    def __init__(self, size=9, max_episode_steps=100, **kwargs):
+    def __init__(self, size=9, max_episode_steps=100, fast=True, **kwargs):
         assert size >= 2
         self.size = size
 
         # Parameters for larger movement steps, fast stepping
         params = DEFAULT_PARAMS.no_random()
-        params.set("forward_step", 0.9)
-        params.set("turn_step", 90)
+
+        if fast:
+            params.set("forward_step", 0.9)
+            params.set("turn_step", 90)
+        else:
+            params.set("forward_step", 0.3)
+            params.set("turn_step", 30)
 
         MiniWorldEnv.__init__(
             self, params=params, max_episode_steps=max_episode_steps, **kwargs
