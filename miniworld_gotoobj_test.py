@@ -149,7 +149,7 @@ def main():
             tensorboard_log="./logs/ppo/miniworld_gotoobj_tensorboard/",
         )
         model.learn(
-            2e6,
+            2e5,
             tb_log_name=f"{stamp}",
             callback=checkpoint_callback,
         )
@@ -160,29 +160,30 @@ def main():
             env = MiniworldGoToObjEnv()
         env = GoToObjObsWrapper(env)
 
-    ppo = PPO("MultiInputPolicy", env, policy_kwargs=policy_kwargs, verbose=1)
+        ppo = PPO("MultiInputPolicy", env, policy_kwargs=policy_kwargs, verbose=1)
 
-    # add the experiment time stamp
-    ppo = ppo.load(f"models/ppo/{args.load_model}", env=env)
+        # add the experiment time stamp
+        ppo = ppo.load(f"models/ppo/{args.load_model}", env=env)
 
-    obs, info = env.reset()
-    rewards = 0
+        obs, info = env.reset()
+        rewards = 0
 
-    for i in range(2000):
-        action, _state = ppo.predict(obs, deterministic=True)
-        obs, reward, terminated, truncated, info = env.step(action)
-        rewards += reward
+        for i in range(2000):
+            action, _state = ppo.predict(obs, deterministic=True)
+            obs, reward, terminated, truncated, info = env.step(action)
+            rewards += reward
 
-        if terminated or truncated:
-            print(f"Test reward: {rewards}")
-            obs, info = env.reset()
-            rewards = 0
-            continue
+            if terminated or truncated:
+                print(f"Test reward: {rewards}")
+                obs, info = env.reset()
+                rewards = 0
+                continue
 
-    print(f"Test reward: {rewards}")
+        print(f"Test reward: {rewards}")
 
-    env.close()
+        env.close()
 
 
 if __name__ == "__main__":
-    main()
+    for i in range(10):
+        main()

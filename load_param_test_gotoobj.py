@@ -182,11 +182,12 @@ def main():
     # model.policy.value_net.bias.requires_grad = False
 
     model.learn(
-        2e6,
+        2e5,
         tb_log_name=f"{stamp}",
         callback=checkpoint_callback,
     )
 
 
 if __name__ == "__main__":
-    main()
+    for i in range(10):
+        main()
