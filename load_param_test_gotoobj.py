@@ -93,9 +93,7 @@ def main():
     model.policy.pi_features_extractor.extractors.mission.bias = nn.Parameter(
         params["policy"]["pi_features_extractor.extractors.mission.bias"]
     )
-    model.policy.pi_features_extractor.extractors.mission.weight.requires_grad = (
-        False
-    )
+    model.policy.pi_features_extractor.extractors.mission.weight.requires_grad = False
     model.policy.pi_features_extractor.extractors.mission.bias.requires_grad = False
 
     """
@@ -123,9 +121,7 @@ def main():
     model.policy.vf_features_extractor.extractors.mission.bias = nn.Parameter(
         params["policy"]["vf_features_extractor.extractors.mission.bias"]
     )
-    model.policy.vf_features_extractor.extractors.mission.weight.requires_grad = (
-        False
-    )
+    model.policy.vf_features_extractor.extractors.mission.weight.requires_grad = False
     model.policy.vf_features_extractor.extractors.mission.bias.requires_grad = False
 
     """
