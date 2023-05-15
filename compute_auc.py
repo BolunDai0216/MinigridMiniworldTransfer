@@ -1,6 +1,22 @@
+import fnmatch
+import os
+import pprint
+
 import numpy as np
 from scipy import integrate
-from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
+from tensorboard.backend.event_processing.event_accumulator import \
+    EventAccumulator
+
+
+def find_files(pattern, path):
+    result = []
+    for root, dirs, files in os.walk(path):
+        for name in files:
+            if fnmatch.fnmatch(name, pattern):
+                # Compute the relative path to the file from the provided path
+                relative_path = os.path.relpath(os.path.join(root, name), path)
+                result.append(relative_path)
+    return result
 
 
 def compute_auc(tensorboard_log_dir):
@@ -26,10 +42,27 @@ def compute_auc(tensorboard_log_dir):
 
 
 def main():
-    tensorboard_log_dir = "logs/ppo/miniworld_gotoobj_tensorboard/20230508-113549_1/events.out.tfevents.1683560149.lambda-vector.3171936.6"
-    area = compute_auc(tensorboard_log_dir)
+    tensorboard_logs_path = "logs/ppo/miniworld_gotoobj_tensorboard/"
+    
+    # Use the function to find all files with 'events.out.tfevents' in their names
+    event_files = find_files('*events.out.tfevents*', tensorboard_logs_path)
 
-    print(area)
+    areas = []
+
+    for filename in event_files:
+        try:
+            areas.append({
+                "filename": tensorboard_logs_path + filename,
+                "area": compute_auc(tensorboard_logs_path + filename)
+            })
+        except:
+            continue
+    
+    # Create a pretty printer
+    pp = pprint.PrettyPrinter(indent=4)
+
+    # Use it to print the dictionary
+    pp.pprint(areas)
 
 
 if __name__ == "__main__":
