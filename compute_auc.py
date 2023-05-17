@@ -58,10 +58,10 @@ def compute_average_areas(tensorboard_logs_path):
             continue
 
     # Create a pretty printer
-    pp = pprint.PrettyPrinter(indent=4)
-
+    # pp = pprint.PrettyPrinter(indent=4)
     # Use it to print the dictionary
     # pp.pprint(areas)
+    
     area_arr = np.array([d["area"] for d in areas])
 
     return areas, area_arr
@@ -69,7 +69,7 @@ def compute_average_areas(tensorboard_logs_path):
 
 def main():
     base_auc = compute_auc(
-        "logs/ppo/minigrid_gotoobj_tensorboard/20230507-161829_1/events.out.tfevents.1683490710.lambda-vector.2899804.0"
+        "logs/ppo/miniworld_gotoobj_tensorboard/20230508-113549_1/events.out.tfevents.1683560149.lambda-vector.3171936.6"
     )
 
     for name in ["mission", "actor", "critic", "all"]:
