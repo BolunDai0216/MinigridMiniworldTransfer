@@ -1,3 +1,4 @@
+import argparse
 from datetime import datetime
 from time import time
 
@@ -6,11 +7,12 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.save_util import load_from_zip_file
 
+import yaml
 from miniworld_gotoobj_env import MiniworldGoToObjEnv
-from miniworld_gotoobj_test import GoToObjObsWrapper, GoToObjEnvExtractor
+from miniworld_gotoobj_test import GoToObjEnvExtractor, GoToObjObsWrapper
 
 
-def main():
+def train(transfers, name):
     data, params, pytorch_variables = load_from_zip_file(
         "models/ppo/minigrid_gotoobj_20230507-161829/iter_2000000_steps.zip",
         device="auto",
@@ -28,7 +30,7 @@ def main():
 
     checkpoint_callback = CheckpointCallback(
         save_freq=1e5,
-        save_path=f"./models/ppo/miniworld_gotoobj_transfer_{stamp}/",
+        save_path=f"./models/ppo/miniworld_gotoobj_{name}_transfer_{stamp}/",
         name_prefix="iter",
     )
 
@@ -37,7 +39,7 @@ def main():
         env,
         policy_kwargs=policy_kwargs,
         verbose=1,
-        tensorboard_log="./logs/ppo/miniworld_gotoobj_transfer_tensorboard/",
+        tensorboard_log=f"./logs/ppo/miniworld_gotoobj_{name}_transfer_{stamp}_tensorboard/",
     )
 
     """
@@ -58,15 +60,20 @@ def main():
         )
     )
     """
-
-    model.policy.features_extractor.extractors.mission.weight = nn.Parameter(
-        params["policy"]["features_extractor.extractors.mission.weight"]
-    )
-    model.policy.features_extractor.extractors.mission.bias = nn.Parameter(
-        params["policy"]["features_extractor.extractors.mission.bias"]
-    )
-    model.policy.features_extractor.extractors.mission.weight.requires_grad = False
-    model.policy.features_extractor.extractors.mission.bias.requires_grad = False
+    if "mission" in transfers:
+        model.policy.features_extractor.extractors.mission.weight = nn.Parameter(
+            params["policy"]["features_extractor.extractors.mission.weight"]
+        )
+        model.policy.features_extractor.extractors.mission.bias = nn.Parameter(
+            params["policy"]["features_extractor.extractors.mission.bias"]
+        )
+        if "mission_freeze" in transfers:
+            model.policy.features_extractor.extractors.mission.weight.requires_grad = (
+                False
+            )
+            model.policy.features_extractor.extractors.mission.bias.requires_grad = (
+                False
+            )
 
     """
     (pi_features_extractor): GridEnvExtractor(
@@ -86,15 +93,20 @@ def main():
         )
     )
     """
-
-    model.policy.pi_features_extractor.extractors.mission.weight = nn.Parameter(
-        params["policy"]["pi_features_extractor.extractors.mission.weight"]
-    )
-    model.policy.pi_features_extractor.extractors.mission.bias = nn.Parameter(
-        params["policy"]["pi_features_extractor.extractors.mission.bias"]
-    )
-    model.policy.pi_features_extractor.extractors.mission.weight.requires_grad = False
-    model.policy.pi_features_extractor.extractors.mission.bias.requires_grad = False
+    if "mission" in transfers:
+        model.policy.pi_features_extractor.extractors.mission.weight = nn.Parameter(
+            params["policy"]["pi_features_extractor.extractors.mission.weight"]
+        )
+        model.policy.pi_features_extractor.extractors.mission.bias = nn.Parameter(
+            params["policy"]["pi_features_extractor.extractors.mission.bias"]
+        )
+        if "mission_freeze" in transfers:
+            model.policy.pi_features_extractor.extractors.mission.weight.requires_grad = (
+                False
+            )
+            model.policy.pi_features_extractor.extractors.mission.bias.requires_grad = (
+                False
+            )
 
     """
     (vf_features_extractor): GridEnvExtractor(
@@ -114,15 +126,20 @@ def main():
         )
     )
     """
-
-    model.policy.vf_features_extractor.extractors.mission.weight = nn.Parameter(
-        params["policy"]["vf_features_extractor.extractors.mission.weight"]
-    )
-    model.policy.vf_features_extractor.extractors.mission.bias = nn.Parameter(
-        params["policy"]["vf_features_extractor.extractors.mission.bias"]
-    )
-    model.policy.vf_features_extractor.extractors.mission.weight.requires_grad = False
-    model.policy.vf_features_extractor.extractors.mission.bias.requires_grad = False
+    if "mission" in transfers:
+        model.policy.vf_features_extractor.extractors.mission.weight = nn.Parameter(
+            params["policy"]["vf_features_extractor.extractors.mission.weight"]
+        )
+        model.policy.vf_features_extractor.extractors.mission.bias = nn.Parameter(
+            params["policy"]["vf_features_extractor.extractors.mission.bias"]
+        )
+        if "mission_freeze" in transfers:
+            model.policy.vf_features_extractor.extractors.mission.weight.requires_grad = (
+                False
+            )
+            model.policy.vf_features_extractor.extractors.mission.bias.requires_grad = (
+                False
+            )
 
     """
     (mlp_extractor): MlpExtractor(
@@ -141,41 +158,54 @@ def main():
     )
     """
 
-    # for i in [0, 2]:
-    #     model.policy.mlp_extractor.policy_net[i].weight = nn.Parameter(
-    #         params["policy"][f"mlp_extractor.policy_net.{i}.weight"]
-    #     )
-    #     model.policy.mlp_extractor.policy_net[i].bias = nn.Parameter(
-    #         params["policy"][f"mlp_extractor.policy_net.{i}.bias"]
-    #     )
-    #     model.policy.mlp_extractor.value_net[i].weight = nn.Parameter(
-    #         params["policy"][f"mlp_extractor.value_net.{i}.weight"]
-    #     )
-    #     model.policy.mlp_extractor.value_net[i].bias = nn.Parameter(
-    #         params["policy"][f"mlp_extractor.value_net.{i}.bias"]
-    #     )
-    #     model.policy.mlp_extractor.policy_net[i].weight.requires_grad = False
-    #     model.policy.mlp_extractor.policy_net[i].bias.requires_grad = False
-    #     model.policy.mlp_extractor.value_net[i].weight.requires_grad = False
-    #     model.policy.mlp_extractor.value_net[i].bias.requires_grad = False
+    for i in [0, 2]:
+        if "actor" in transfers:
+            model.policy.mlp_extractor.policy_net[i].weight = nn.Parameter(
+                params["policy"][f"mlp_extractor.policy_net.{i}.weight"]
+            )
+            model.policy.mlp_extractor.policy_net[i].bias = nn.Parameter(
+                params["policy"][f"mlp_extractor.policy_net.{i}.bias"]
+            )
+            if "actor_freeze" in transfers:
+                model.policy.mlp_extractor.policy_net[i].weight.requires_grad = False
+                model.policy.mlp_extractor.policy_net[i].bias.requires_grad = False
+
+        if "critic" in transfers:
+            model.policy.mlp_extractor.value_net[i].weight = nn.Parameter(
+                params["policy"][f"mlp_extractor.value_net.{i}.weight"]
+            )
+            model.policy.mlp_extractor.value_net[i].bias = nn.Parameter(
+                params["policy"][f"mlp_extractor.value_net.{i}.bias"]
+            )
+            if "critic_freeze" in transfers:
+                model.policy.mlp_extractor.value_net[i].weight.requires_grad = False
+                model.policy.mlp_extractor.value_net[i].bias.requires_grad = False
 
     """
     (action_net): Linear(in_features=64, out_features=3, bias=True)
     """
-
-    # model.policy.action_net.weight = nn.Parameter(params["policy"]["action_net.weight"])
-    # model.policy.action_net.weight.requires_grad = False
-    # model.policy.action_net.bias = nn.Parameter(params["policy"]["action_net.bias"])
-    # model.policy.action_net.bias.requires_grad = False
+    if "actor" in transfers:
+        model.policy.action_net.weight = nn.Parameter(
+            params["policy"]["action_net.weight"]
+        )
+        model.policy.action_net.bias = nn.Parameter(params["policy"]["action_net.bias"])
+        if "actor_freeze" in transfers:
+            model.policy.action_net.weight.requires_grad = False
+            model.policy.action_net.bias.requires_grad = False
 
     """
     (value_net): Linear(in_features=64, out_features=1, bias=True)
     """
-
-    # model.policy.value_net.weight = nn.Parameter(params["policy"]["value_net.weight"])
-    # model.policy.value_net.weight.requires_grad = False
-    # model.policy.value_net.bias = nn.Parameter(params["policy"]["value_net.bias"])
-    # model.policy.value_net.bias.requires_grad = False
+    if "critic" in transfers:
+        model.policy.value_net.weight = nn.Parameter(
+            params["policy"]["value_net.weight"]
+        )
+        model.policy.value_net.weight.requires_grad = False
+        if "critic_freeze" in transfers:
+            model.policy.value_net.bias = nn.Parameter(
+                params["policy"]["value_net.bias"]
+            )
+            model.policy.value_net.bias.requires_grad = False
 
     model.learn(
         2e5,
@@ -184,6 +214,20 @@ def main():
     )
 
 
+def main():
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('--num', type=int)
+    args = parser.parse_args()
+
+    with open(f'yaml/load_param_test_gotoobj_{args.num}.yaml', 'r') as file: 
+        train_dict = yaml.safe_load(file)
+    
+    for exp in train_dict["experiments"]:
+        transfers = exp["transfers"]
+        name = exp["name"]
+        
+        for i in range(10):
+            train(transfers, name)
+
 if __name__ == "__main__":
-    for i in range(10):
-        main()
+    main()

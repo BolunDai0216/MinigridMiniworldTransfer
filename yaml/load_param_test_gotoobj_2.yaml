@@ -1,0 +1,18 @@
+experiments:
+  - transfers: 
+      - critic
+    name: critic
+  - transfers: 
+      - critic
+      - critic_freeze
+    name: critic_freeze
+  - transfers: 
+      - mission
+      - actor
+    name: mission_actor
+  - transfers: 
+      - mission
+      - actor
+      - mission_freeze
+      - actor_freeze
+    name: mission_actor_freeze

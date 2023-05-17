@@ -4,8 +4,7 @@ import pprint
 
 import numpy as np
 from scipy import integrate
-from tensorboard.backend.event_processing.event_accumulator import \
-    EventAccumulator
+from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
 
 
 def find_files(pattern, path):
@@ -41,28 +40,43 @@ def compute_auc(tensorboard_log_dir):
     return area
 
 
-def main():
-    tensorboard_logs_path = "logs/ppo/miniworld_gotoobj_tensorboard/"
-    
+def compute_average_areas(tensorboard_logs_path):
     # Use the function to find all files with 'events.out.tfevents' in their names
-    event_files = find_files('*events.out.tfevents*', tensorboard_logs_path)
+    event_files = find_files("*events.out.tfevents*", tensorboard_logs_path)
 
     areas = []
 
     for filename in event_files:
         try:
-            areas.append({
-                "filename": tensorboard_logs_path + filename,
-                "area": compute_auc(tensorboard_logs_path + filename)
-            })
+            areas.append(
+                {
+                    "filename": tensorboard_logs_path + filename,
+                    "area": compute_auc(tensorboard_logs_path + filename),
+                }
+            )
         except:
             continue
-    
+
     # Create a pretty printer
     pp = pprint.PrettyPrinter(indent=4)
 
     # Use it to print the dictionary
-    pp.pprint(areas)
+    # pp.pprint(areas)
+    area_arr = np.array([d["area"] for d in areas])
+
+    return areas, area_arr
+
+
+def main():
+    base_auc = compute_auc(
+        "logs/ppo/minigrid_gotoobj_tensorboard/20230507-161829_1/events.out.tfevents.1683490710.lambda-vector.2899804.0"
+    )
+
+    for name in ["mission", "actor", "critic", "all"]:
+        transfer_areas, areas_arr = compute_average_areas(
+            f"logs/ppo/miniworld_gotoobj_{name}_transfer_tensorboard/"
+        )
+        print(f"{name} transfer: {(areas_arr.mean() - base_auc)/base_auc}")
 
 
 if __name__ == "__main__":

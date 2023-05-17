@@ -1,0 +1,15 @@
+experiments:
+  - transfers: 
+      - mission
+    name: mission
+  - transfers: 
+      - mission
+      - mission_freeze
+    name: mission_freeze
+  - transfers: 
+      - actor
+    name: actor
+  - transfers: 
+      - actor
+      - actor_freeze
+    name: actor_freeze
