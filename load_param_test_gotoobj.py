@@ -215,19 +215,20 @@ def train(transfers, name):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('--num', type=int)
+    parser = argparse.ArgumentParser(description="Process some integers.")
+    parser.add_argument("--num", type=int)
     args = parser.parse_args()
 
-    with open(f'yaml/load_param_test_gotoobj_{args.num}.yaml', 'r') as file: 
+    with open(f"yaml/load_param_test_gotoobj_{args.num}.yaml", "r") as file:
         train_dict = yaml.safe_load(file)
-    
+
     for exp in train_dict["experiments"]:
         transfers = exp["transfers"]
         name = exp["name"]
-        
+
         for i in range(10):
             train(transfers, name)
+
 
 if __name__ == "__main__":
     main()
