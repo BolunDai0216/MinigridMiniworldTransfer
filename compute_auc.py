@@ -92,12 +92,14 @@ def main():
         "mission_actor_critic_freeze",
     ]
 
+    np.set_printoptions(precision=2)
+
     for name in name_list:
         transfer_areas, areas_arr = compute_average_areas(
             f"miniworld_gotoobj_{name}_transfer_*_tensorboard"
         )
-
-        print(f"{name} transfer: {(areas_arr.mean() - base_auc) / base_auc}")
+        progress = (areas_arr - base_auc) / base_auc
+        print(f"{name} transfer: {progress.mean() * 100:.3f} ± {progress.std() * 100:.3f}")
 
 
 if __name__ == "__main__":
