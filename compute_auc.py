@@ -99,7 +99,9 @@ def main():
             f"miniworld_gotoobj_{name}_transfer_*_tensorboard"
         )
         progress = (areas_arr - base_auc) / base_auc
-        print(f"{name} transfer: {progress.mean() * 100:.3f} ± {progress.std() * 100:.3f}")
+        print(
+            f"{name} transfer: {progress.mean() * 100:.3f} ± {progress.std() * 100:.3f}"
+        )
 
 
 if __name__ == "__main__":
