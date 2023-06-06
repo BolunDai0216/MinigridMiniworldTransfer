@@ -200,11 +200,9 @@ def train(transfers, name):
         model.policy.value_net.weight = nn.Parameter(
             params["policy"]["value_net.weight"]
         )
-        model.policy.value_net.weight.requires_grad = False
+        model.policy.value_net.bias = nn.Parameter(params["policy"]["value_net.bias"])
         if "critic_freeze" in transfers:
-            model.policy.value_net.bias = nn.Parameter(
-                params["policy"]["value_net.bias"]
-            )
+            model.policy.value_net.weight.requires_grad = False
             model.policy.value_net.bias.requires_grad = False
 
     model.learn(
