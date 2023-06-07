@@ -39,7 +39,7 @@ def train(transfers, name):
         env,
         policy_kwargs=policy_kwargs,
         verbose=1,
-        tensorboard_log=f"./logs/ppo/miniworld_gotoobj_{name}_transfer_{stamp}_tensorboard/",
+        tensorboard_log=f"./logs/ppo2/miniworld_gotoobj_{name}_transfer_{stamp}_tensorboard/",
     )
 
     """

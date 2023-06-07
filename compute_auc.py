@@ -45,13 +45,13 @@ def compute_auc(tensorboard_log_dir):
     return area
 
 
-def compute_average_areas(tensorboard_logs_path):
+def compute_average_areas(tensorboard_logs_path, prefix="./logs/ppo/"):
     # Use the function to find all files with 'events.out.tfevents' in their names
-    event_folders = find_folders("./logs/ppo/", tensorboard_logs_path)
+    event_folders = find_folders(prefix, tensorboard_logs_path)
     event_files = []
     for folder in event_folders:
         event_files.extend(
-            find_files("./logs/ppo/" + folder + "/", "*events.out.tfevents*")
+            find_files(prefix + folder + "/", "*events.out.tfevents*")
         )
 
     areas = []
@@ -73,9 +73,8 @@ def compute_average_areas(tensorboard_logs_path):
 
 
 def main():
-    base_auc = compute_auc(
-        "logs/ppo/miniworld_gotoobj_tensorboard/20230508-113549_1/events.out.tfevents.1683560149.lambda-vector.3171936.6"
-    )
+    _, _areas_arr = compute_average_areas("miniworld_gotoobj_tensorboard", prefix="./logs/ppo/")
+    base_auc = _areas_arr.mean()
 
     name_list = [
         "mission",
