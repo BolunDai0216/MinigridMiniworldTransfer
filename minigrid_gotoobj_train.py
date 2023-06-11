@@ -14,7 +14,7 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
 
-from minigrid_gotoobj import GoToObjEnv
+from minigrid_gotoobj_env import GoToObjEnv
 
 
 class ObjObsWrapper(ObservationWrapper):

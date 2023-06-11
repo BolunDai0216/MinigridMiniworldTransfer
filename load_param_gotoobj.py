@@ -9,7 +9,7 @@ from stable_baselines3.common.save_util import load_from_zip_file
 
 import yaml
 from miniworld_gotoobj_env import MiniworldGoToObjEnv
-from miniworld_gotoobj_test import GoToObjEnvExtractor, GoToObjObsWrapper
+from miniworld_gotoobj_train import GoToObjEnvExtractor, GoToObjObsWrapper
 
 
 def train(transfers, name):

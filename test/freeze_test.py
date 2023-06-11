@@ -3,7 +3,7 @@ import miniworld
 from stable_baselines3 import PPO
 
 from miniworld_gotoobj_env import MiniworldGoToObjEnv
-from miniworld_gotoobj_test import GoToObjEnvExtractor, GoToObjObsWrapper
+from miniworld_gotoobj_train import GoToObjEnvExtractor, GoToObjObsWrapper
 from stable_baselines3.common.save_util import load_from_zip_file
 
 
@@ -22,7 +22,9 @@ def main():
         print_system_info=False,
     )
 
-    change = params1["policy"]["action_net.weight"] - params2["policy"]["action_net.weight"]
+    change = (
+        params1["policy"]["action_net.weight"] - params2["policy"]["action_net.weight"]
+    )
 
     breakpoint()
 

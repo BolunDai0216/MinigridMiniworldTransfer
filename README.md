@@ -29,3 +29,25 @@ self.image_conv = nn.Sequential(
     nn.ReLU()
 )
 ```
+
+## Train Minigrid \& Miniworld Env
+
+To train the Minigrid agent, use the command
+
+```python
+python3 minigrid_gotoobj_train.py --train
+```
+
+To train the Miniworld agent use the command
+
+```python
+python3 miniworld_gotoobj_train.py --train
+```
+
+To run all of the transfer learning experiments, use the commands
+
+```python
+python3 load_param_gotoobj.py --num 1
+python3 load_param_gotoobj.py --num 2
+python3 load_param_gotoobj.py --num 3
+```
